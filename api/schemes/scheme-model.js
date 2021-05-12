@@ -45,13 +45,6 @@ async function findById(scheme_id) { // EXERCISE B
     2B- When you have a grasp on the query go ahead and build it in Knex
     making it parametric: instead of a literal `1` you should use `scheme_id`.
   */
-  // const stepsQuery = await db('schemes as sc')
-  //   .select('sc.scheme_name', 'st.*')
-  //   .leftJoin('steps as st', 'sc.scheme_id', 'st.scheme_id')
-  //   .where('sc.scheme_id', scheme_id)
-  //   .orderBy('st.step_number', 'asc')
-
-  
   /*
     3B- Test in Postman and see that the resulting data does not look like a scheme,
     but more like an array of steps each including scheme information:
@@ -95,14 +88,6 @@ async function findById(scheme_id) { // EXERCISE B
         ]
       }
   */
-  // const result = {
-  //   scheme_id: parseInt(scheme_id),
-  //   scheme_name: stepsQuery[0]['scheme_name'],
-  //   steps: stepsQuery,
-  // }
-  // if (stepsQuery[0].length === 0){
-  //   return  {steps : []};
-  // }
   /*
   5B- This is what the result should look like _if there are no steps_ for a `scheme_id`:
   
@@ -137,7 +122,7 @@ async function findById(scheme_id) { // EXERCISE B
   return result;
 }
 
-function findSteps(scheme_id) { // EXERCISE C
+async function findSteps(scheme_id) { // EXERCISE C
   /*
     1C- Build a query in Knex that returns the following data.
     The steps should be sorted by step_number, and the array
@@ -158,6 +143,13 @@ function findSteps(scheme_id) { // EXERCISE C
         }
       ]
   */
+  const steps = await db('steps as st')
+    .leftJoin('schemes as sc', 'sc.scheme_id', 'st.scheme_id')
+    .select('st.step_number', 'st.step_id', 'st.instructions', 'sc.scheme_name')
+    .where('st.scheme_id', scheme_id)
+    .orderBy('st.step_number', 'asc');
+
+  return steps;
 }
 
 function add(scheme) { // EXERCISE D
