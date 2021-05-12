@@ -7,7 +7,8 @@
   }
 */
 const checkSchemeId = (req, res, next) => {
-
+  // TODO
+  next();
 }
 
 /*
@@ -19,7 +20,8 @@ const checkSchemeId = (req, res, next) => {
   }
 */
 const validateScheme = (req, res, next) => {
-
+  // TODO
+  next();
 }
 
 /*
@@ -32,7 +34,8 @@ const validateScheme = (req, res, next) => {
   }
 */
 const validateStep = (req, res, next) => {
-
+  // TODO
+  next();
 }
 
 module.exports = {
