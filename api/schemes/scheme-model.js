@@ -45,14 +45,13 @@ async function findById(scheme_id) { // EXERCISE B
     2B- When you have a grasp on the query go ahead and build it in Knex
     making it parametric: instead of a literal `1` you should use `scheme_id`.
   */
-  const stepsQuery = await db('schemes as sc')
-    .select('sc.scheme_name', 'st.*')
-    .leftJoin('steps as st', 'sc.scheme_id', 'st.scheme_id')
-    .where('sc.scheme_id', scheme_id)
-    .orderBy('st.step_number', 'asc')
+  // const stepsQuery = await db('schemes as sc')
+  //   .select('sc.scheme_name', 'st.*')
+  //   .leftJoin('steps as st', 'sc.scheme_id', 'st.scheme_id')
+  //   .where('sc.scheme_id', scheme_id)
+  //   .orderBy('st.step_number', 'asc')
 
-  console.log(stepsQuery);
-  // return stepsQuery;
+  
   /*
     3B- Test in Postman and see that the resulting data does not look like a scheme,
     but more like an array of steps each including scheme information:
@@ -96,21 +95,46 @@ async function findById(scheme_id) { // EXERCISE B
         ]
       }
   */
-  const result = {
-    scheme_id: scheme_id,
-    scheme_name: stepsQuery[0]['scheme_name'],
-    steps: stepsQuery.length > 0 ? stepsQuery: [],
-  }
-  return result;
+  // const result = {
+  //   scheme_id: parseInt(scheme_id),
+  //   scheme_name: stepsQuery[0]['scheme_name'],
+  //   steps: stepsQuery,
+  // }
+  // if (stepsQuery[0].length === 0){
+  //   return  {steps : []};
+  // }
   /*
-    5B- This is what the result should look like _if there are no steps_ for a `scheme_id`:
-
-      {
-        "scheme_id": 7,
-        "scheme_name": "Have Fun!",
-        "steps": []
-      }
+  5B- This is what the result should look like _if there are no steps_ for a `scheme_id`:
+  
+  {
+    "scheme_id": 7,
+    "scheme_name": "Have Fun!",
+    "steps": []
+  }
   */
+  const stepsQuery = await db('schemes as sc')
+    .select('sc.scheme_name', 'st.*')
+    .leftJoin('steps as st', 'sc.scheme_id', 'st.scheme_id')
+    .orderBy('st.step_number')
+    .where('sc.scheme_id', scheme_id)
+
+  const result = {
+    scheme_id: parseInt(scheme_id), //stepsQuery[0]['scheme_id'],
+    scheme_name: stepsQuery[0]['scheme_name'],
+    steps: [],
+  }
+
+  stepsQuery.forEach(step => {
+    if (step.step_id){
+      result.steps.push({
+        step_id: parseInt(step.step_id),
+        step_number: step.step_number,
+        instructions: step.instructions,
+      })
+    }
+  })
+
+  return result;
 }
 
 function findSteps(scheme_id) { // EXERCISE C
