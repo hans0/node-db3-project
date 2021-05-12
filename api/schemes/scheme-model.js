@@ -29,7 +29,7 @@ function find() { // EXERCISE A
   return rows;
 }
 
-function findById(scheme_id) { // EXERCISE B
+async function findById(scheme_id) { // EXERCISE B
   /*
     1B- Study the SQL query below running it in SQLite Studio against `data/schemes.db3`:
 
@@ -45,10 +45,14 @@ function findById(scheme_id) { // EXERCISE B
     2B- When you have a grasp on the query go ahead and build it in Knex
     making it parametric: instead of a literal `1` you should use `scheme_id`.
   */
-  const rows = db('scheme as sc')
+  const stepsQuery = await db('schemes as sc')
     .select('sc.scheme_name', 'st.*')
     .leftJoin('steps as st', 'sc.scheme_id', 'st.scheme_id')
-  return rows;
+    .where('sc.scheme_id', scheme_id)
+    .orderBy('st.step_number', 'asc')
+
+  console.log(stepsQuery);
+  // return stepsQuery;
   /*
     3B- Test in Postman and see that the resulting data does not look like a scheme,
     but more like an array of steps each including scheme information:
@@ -91,7 +95,14 @@ function findById(scheme_id) { // EXERCISE B
           // etc
         ]
       }
-
+  */
+  const result = {
+    scheme_id: scheme_id,
+    scheme_name: stepsQuery[0]['scheme_name'],
+    steps: stepsQuery.length > 0 ? stepsQuery: [],
+  }
+  return result;
+  /*
     5B- This is what the result should look like _if there are no steps_ for a `scheme_id`:
 
       {
